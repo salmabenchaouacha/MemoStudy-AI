@@ -13,7 +13,22 @@
     "questions ouvertes",
     "gestion du temps"
   ],
-  "planning": [],
+  "planning": [
+    {
+      "id": 1,
+      "date": "2026-06-18",
+      "task": "math addition",
+      "duration_minutes": 45,
+      "status": "terminé"
+    },
+    {
+      "id": 2,
+      "date": "2026-06-18",
+      "task": "science ",
+      "duration_minutes": 60,
+      "status": "à faire"
+    }
+  ],
   "progression": {
     "chapitres_revises": [],
     "score_moyen": null,

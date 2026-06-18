@@ -1,4 +1,5 @@
 import os
+import time
 from typing import List, Dict
 
 from dotenv import load_dotenv
@@ -16,7 +17,14 @@ if not GEMINI_API_KEY:
 
 client = genai.Client(api_key=GEMINI_API_KEY)
 
-MODEL_NAME = "gemini-3.5-flash"
+
+# On met plusieurs modèles.
+# Si le premier est saturé, l'app essaie le suivant.
+MODEL_CANDIDATES = [
+    "gemini-3.5-flash",
+    "gemini-3.1-flash-lite",
+    "gemini-flash-latest"
+]
 
 
 def build_system_prompt() -> str:
@@ -27,7 +35,7 @@ Tu es MemoStudy AI, un assistant intelligent de révision.
 
 Ton rôle :
 - aider l'étudiant à comprendre ses leçons ;
-- générer des explications simples ;
+- générer des exercices simples ;
 - proposer des méthodes de réponse ;
 - aider à préparer les concours ;
 - utiliser la mémoire longue pour personnaliser tes réponses.
@@ -42,8 +50,7 @@ Règles de réponse :
 4. Si l'étudiant a une difficulté avec les questions ouvertes, propose un plan de réponse.
 5. Si l'étudiant a une difficulté avec la gestion du temps, propose une méthode rapide.
 6. Donne des exemples simples.
-7. Termine souvent par une mini-question d'entraînement.
-8. Ne dis pas que tu as une mémoire magique : utilise simplement les informations disponibles.
+7. Termine par une mini-question d'entraînement.
 """
 
 
@@ -52,11 +59,10 @@ def format_short_memory(short_memory: List[Dict[str, str]]) -> str:
         return "Aucun historique récent."
 
     recent_messages = short_memory[-8:]
-
     formatted_messages = []
 
     for message in recent_messages:
-        role = message.get("role", "unknown")
+        role = message.get("role", "")
         content = message.get("content", "")
 
         if role == "user":
@@ -65,6 +71,53 @@ def format_short_memory(short_memory: List[Dict[str, str]]) -> str:
             formatted_messages.append(f"MemoStudy AI : {content}")
 
     return "\n".join(formatted_messages)
+
+
+def local_fallback_response(user_question: str) -> str:
+    """
+    Réponse locale si Gemini est temporairement indisponible.
+    Comme ça, l'application ne reste pas bloquée.
+    """
+    memory = read_memory()
+    student = memory.get("student", {})
+    matiere = student.get("matiere", "science")
+    niveau = student.get("niveau", "concours")
+
+    return f"""
+Gemini est temporairement indisponible, donc je te donne une réponse locale simple.
+
+### Exercice personnalisé
+
+Matière : **{matiere}**  
+Niveau : **{niveau}**
+
+Ta demande :
+
+> {user_question}
+
+### Exercice simple
+
+Explique avec tes mots la notion suivante :
+
+**Pourquoi les plantes ont-elles besoin de lumière pour vivre ?**
+
+### Aide pour répondre
+
+Utilise cette structure :
+
+1. Je donne une définition simple.
+2. J’explique le rôle de la lumière.
+3. Je donne un exemple.
+4. Je termine par une phrase de conclusion.
+
+### Réponse attendue courte
+
+Les plantes ont besoin de lumière pour fabriquer leur nourriture grâce à la photosynthèse. Elles utilisent la lumière, l’eau et le dioxyde de carbone pour produire de la matière organique et libérer du dioxygène.
+
+### Mini-question
+
+Pourquoi la photosynthèse est-elle importante pour les êtres vivants ?
+"""
 
 
 def generate_ai_response(user_question: str, short_memory: List[Dict[str, str]]) -> str:
@@ -83,24 +136,35 @@ Nouvelle question de l'étudiant :
 Réponds maintenant comme MemoStudy AI.
 """
 
-    try:
-        response = client.models.generate_content(
-            model=MODEL_NAME,
-            contents=full_prompt
-        )
+    last_error = None
 
-        return response.text
+    for model_name in MODEL_CANDIDATES:
+        for attempt in range(3):
+            try:
+                response = client.models.generate_content(
+                    model=model_name,
+                    contents=full_prompt
+                )
 
-    except Exception as e:
-        return f"""
-Une erreur est survenue avec Gemini.
+                if response and response.text:
+                    return response.text
+
+            except Exception as e:
+                last_error = str(e)
+
+                # Retry progressif : 2s, 4s, 8s
+                wait_time = 2 ** (attempt + 1)
+                time.sleep(wait_time)
+
+    return f"""
+Gemini est temporairement indisponible après plusieurs essais.
 
 Détail technique :
-{str(e)}
+{last_error}
 
-Vérifie :
-- ta clé GEMINI_API_KEY dans .env ;
-- ta connexion internet ;
-- le nom du modèle dans MODEL_NAME ;
-- l'installation de google-genai.
+Je continue avec une réponse locale pour ne pas bloquer l'application.
+
+---
+
+{local_fallback_response(user_question)}
 """
