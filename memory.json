@@ -1,0 +1,22 @@
+{
+  "student": {
+    "name": "Salma",
+    "matiere": "science",
+    "niveau": "concours",
+    "objectif": "réussir le concours"
+  },
+  "preferences": {
+    "style_reponse": "simple avec exemples",
+    "format": "structuré"
+  },
+  "difficultes": [
+    "questions ouvertes",
+    "gestion du temps"
+  ],
+  "planning": [],
+  "progression": {
+    "chapitres_revises": [],
+    "score_moyen": null,
+    "quiz_results": []
+  }
+}
