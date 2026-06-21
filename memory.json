@@ -14,7 +14,16 @@
   ],
   "planning": [],
   "progression": {
-    "chapitres_revises": [],
-    "quiz_results": []
+    "chapitres_revises": [
+      "respiration chez la plante"
+    ],
+    "quiz_results": [
+      {
+        "chapter": "respiration chez la plante",
+        "score": 20,
+        "feedback": "Réponse correcte attendue : Le jour et la nuit, de manière continue; Réponse correcte attendue : Le dioxygène; Réponse correcte attendue : L'eau",
+        "created_at": "2026-06-21T15:47:40.263683"
+      }
+    ]
   }
 }

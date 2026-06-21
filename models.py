@@ -99,13 +99,41 @@ class Memory(BaseModel):
         return max((t.id for t in self.planning), default=0) + 1
 
 
+class QuizQuestionType(str, Enum):
+    qcm = "qcm"
+    directe = "question directe"
+    ouverte = "question ouverte"
+
+
 class QuizQuestion(BaseModel):
     id: int
     chapter: str
     matiere: str
     niveau: Niveau
     question: str
-    type: str  # "question ouverte" | "question directe"
+    type: QuizQuestionType
+
+    # QCM uniquement : liste des choix proposés à l'étudiant
+    options: List[str] = Field(default_factory=list)
+    # QCM / question directe : réponse correcte exacte (texte du bon choix,
+    # ou réponse courte attendue). Non envoyée à l'UI tant que non corrigé.
+    correct_answer: Optional[str] = None
+    # Question ouverte : points clés attendus, utilisés par l'IA pour noter.
+    expected_points: List[str] = Field(default_factory=list)
+
+
+class QuestionFeedback(BaseModel):
+    question_id: int
+    is_correct: Optional[bool] = None  # None pour les questions ouvertes notées sur barème
+    points_awarded: float = 0
+    points_max: float = 1
+    explanation: str = ""
+
+
+class QuizCorrection(BaseModel):
+    feedback: List[QuestionFeedback]
+    score: int = Field(ge=0, le=100)
+    overall_comment: str = ""
 
 
 class ChatRole(str, Enum):

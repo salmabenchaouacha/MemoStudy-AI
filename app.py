@@ -10,7 +10,8 @@ from services.memory_service import (
     reset_memory,
 )
 from services.agent_service import generate_ai_response
-from services.quiz_service import generate_quiz, save_quiz_result
+from services.quiz_service import generate_quiz, save_quiz_result, correct_quiz
+from models import QuizQuestionType
 from services.planning_service import add_planning_task, mark_task_done, get_planning, remove_planning_task
 from services.progress_service import get_progress_summary
 
@@ -138,27 +139,79 @@ with tab_quiz:
             with st.spinner("Génération du quiz..."):
                 st.session_state.quiz = generate_quiz(chapter, number_of_questions)
                 st.session_state.quiz_chapter = chapter
+                st.session_state.quiz_answers = {}
+                st.session_state.pop("quiz_correction", None)
             st.success("Quiz généré.")
         else:
             st.error("Entre un chapitre.")
 
     if "quiz" in st.session_state:
-        st.write("### Questions")
+        st.write("### Réponds aux questions")
+
+        if "quiz_answers" not in st.session_state:
+            st.session_state.quiz_answers = {}
+
+        correction = st.session_state.get("quiz_correction")
+        feedback_by_id = {f.question_id: f for f in correction.feedback} if correction else {}
+
         for q in st.session_state.quiz:
             st.write(f"**{q.id}. {q.question}**")
-            st.caption(f"Type : {q.type}")
+            fb = feedback_by_id.get(q.id)
 
-        st.divider()
-        st.write("### Enregistrer le résultat")
+            if q.type == QuizQuestionType.qcm:
+                answer = st.radio(
+                    "Ta réponse",
+                    options=q.options,
+                    index=None,
+                    key=f"quiz_qcm_{q.id}",
+                    label_visibility="collapsed",
+                )
+                st.session_state.quiz_answers[q.id] = answer or ""
+            else:
+                answer = st.text_area(
+                    "Ta réponse",
+                    key=f"quiz_open_{q.id}",
+                    label_visibility="collapsed",
+                    placeholder="Écris ta réponse ici...",
+                )
+                st.session_state.quiz_answers[q.id] = answer
 
-        score = st.slider("Score obtenu", 0, 100, 70)
-        feedback = st.text_area("Feedback", placeholder="Exemple : difficultés dans les questions ouvertes")
+            if fb is not None:
+                if fb.is_correct is True:
+                    st.success(f"✅ {fb.explanation}")
+                elif fb.is_correct is False:
+                    st.error(f"❌ {fb.explanation}")
+                else:  # question ouverte notée sur barème
+                    pct = fb.points_awarded / fb.points_max if fb.points_max else 0
+                    if pct >= 0.75:
+                        st.success(f"📝 {fb.points_awarded}/{fb.points_max} — {fb.explanation}")
+                    elif pct >= 0.4:
+                        st.warning(f"📝 {fb.points_awarded}/{fb.points_max} — {fb.explanation}")
+                    else:
+                        st.error(f"📝 {fb.points_awarded}/{fb.points_max} — {fb.explanation}")
 
-        if st.button("Sauvegarder résultat"):
-            saved_chapter = st.session_state.get("quiz_chapter", chapter)
-            save_quiz_result(saved_chapter, score, feedback)
-            st.success("Résultat sauvegardé dans la mémoire.")
+            st.caption(f"Type : {q.type.value}")
+            st.divider()
+
+        if st.button("Corriger le quiz", type="primary"):
+            with st.spinner("Correction en cours..."):
+                st.session_state.quiz_correction = correct_quiz(
+                    st.session_state.quiz, st.session_state.quiz_answers
+                )
             st.rerun()
+
+        if correction:
+            st.write(f"### Score : {correction.score}/100")
+
+            saved_chapter = st.session_state.get("quiz_chapter", chapter)
+            feedback_summary = "; ".join(
+                f.explanation for f in correction.feedback if f.is_correct is False
+            ) or "Bon travail, peu d'erreurs."
+
+            if st.button("Sauvegarder ce résultat dans la mémoire"):
+                save_quiz_result(saved_chapter, correction.score, feedback_summary)
+                st.success("Résultat sauvegardé dans la mémoire.")
+                st.rerun()
 
 
 # --- Planning ---
