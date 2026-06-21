@@ -1,37 +1,20 @@
 {
   "student": {
-    "name": "Salma",
-    "matiere": "science",
-    "niveau": "concours",
-    "objectif": "réussir le concours"
+    "name": "salma",
+    "matiere": "sciences",
+    "niveau": "intermédiaire",
+    "objectif": "concours "
   },
   "preferences": {
     "style_reponse": "simple avec exemples",
     "format": "structuré"
   },
   "difficultes": [
-    "questions ouvertes",
-    "gestion du temps"
+    "manque de vocabulaire sciientifique"
   ],
-  "planning": [
-    {
-      "id": 1,
-      "date": "2026-06-18",
-      "task": "math addition",
-      "duration_minutes": 45,
-      "status": "terminé"
-    },
-    {
-      "id": 2,
-      "date": "2026-06-18",
-      "task": "science ",
-      "duration_minutes": 60,
-      "status": "à faire"
-    }
-  ],
+  "planning": [],
   "progression": {
     "chapitres_revises": [],
-    "score_moyen": null,
     "quiz_results": []
   }
 }
