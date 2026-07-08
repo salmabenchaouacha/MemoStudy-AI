@@ -12,15 +12,7 @@
   "difficultes": [
     "manque de vocabulaire sciientifique"
   ],
-  "planning": [
-    {
-      "id": 1,
-      "date": "2026-07-08",
-      "task": "hhh",
-      "duration_minutes": 45,
-      "status": "à faire"
-    }
-  ],
+  "planning": [],
   "progression": {
     "chapitres_revises": [
       "respiration chez la plante"

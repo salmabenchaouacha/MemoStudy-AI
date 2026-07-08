@@ -156,6 +156,15 @@ button[kind="secondary"],
 }
 .stButton>button:active { transform: translateY(0); }
 
+/* ---------- LABELS DE CHAMPS — jamais de texte blanc sur fond clair ---------- */
+[data-testid="stWidgetLabel"], [data-testid="stWidgetLabel"] p {
+  color: var(--ink) !important;
+}
+[data-testid="stSidebar"] [data-testid="stWidgetLabel"],
+[data-testid="stSidebar"] [data-testid="stWidgetLabel"] p {
+  color: var(--parchment) !important;
+}
+
 /* ---------- FORM INPUTS — un seul design, une seule taille, zéro noir ---------- */
 div[data-testid="stTextInput"] input,
 div[data-testid="stTextArea"] textarea,
@@ -223,19 +232,31 @@ ul[data-testid="stSelectboxVirtualDropdown"] li:hover, div[data-baseweb="popover
   background: rgba(124,92,255,0.12) !important;
   color: var(--gold) !important;
 }
-/* boîte englobante du chat input — même famille visuelle que les autres champs */
+/* boîte englobante du chat input — même famille visuelle que les autres champs, sans coin noir */
 [data-testid="stChatInput"] {
   border-radius: 10px !important;
   border: 1.5px solid var(--rule) !important;
   background: #fff !important;
+  overflow: hidden !important;
 }
 [data-testid="stChatInput"]:focus-within {
   border-color: var(--gold) !important;
   box-shadow: 0 0 0 3px rgba(124,92,255,0.15) !important;
 }
-[data-testid="stChatInput"] > div {
+[data-testid="stChatInput"] > div,
+[data-testid="stChatInputContainer"],
+[data-testid="stBottomBlockContainer"] [data-baseweb="base-input"],
+[data-testid="stChatInput"] [data-baseweb="textarea"] {
   border: none !important;
-  background: transparent !important;
+  border-radius: 10px !important;
+  background: #fff !important;
+  box-shadow: none !important;
+}
+[data-testid="stChatInput"] textarea {
+  border: none !important;
+  border-radius: 10px !important;
+  background: #fff !important;
+  color: var(--ink) !important;
 }
 /* stepper +/- du number_input — même famille que les champs */
 [data-testid="stNumberInputStepUp"], [data-testid="stNumberInputStepDown"] {
@@ -244,6 +265,15 @@ ul[data-testid="stSelectboxVirtualDropdown"] li:hover, div[data-baseweb="popover
 }
 [data-testid="stNumberInputStepUp"]:hover, [data-testid="stNumberInputStepDown"]:hover {
   border-color: var(--gold) !important; color: var(--gold) !important;
+}
+/* conteneur complet du number_input (englobe champ + steppers) — plus de bordure noire */
+div[data-testid="stNumberInput"] {
+  border-radius: 10px !important;
+}
+div[data-testid="stNumberInput"] > div {
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
 }
 /* slider — un seul design néon, pas de rouge par défaut */
 div[data-testid="stSlider"] [role="slider"] {
@@ -377,8 +407,44 @@ div[data-testid="stSlider"] > div > div > div {
   background: rgba(255,255,255,0.6); border: 1px solid var(--rule);
 }
 
-/* ---------- DATAFRAME ---------- */
-[data-testid="stDataFrame"] { border-radius: 12px; overflow: hidden; border: 1px solid var(--rule); }
+/* ---------- DATAFRAME — thème clair forcé, jamais de fond noir ---------- */
+[data-testid="stDataFrame"] {
+  border-radius: 12px; overflow: hidden; border: 1px solid var(--rule);
+  --gdg-bg-cell: #ffffff;
+  --gdg-bg-cell-medium: #F4F6FD;
+  --gdg-bg-header: #EFEAFF;
+  --gdg-bg-header-has-focus: #E7DFFF;
+  --gdg-bg-header-hovered: #E7DFFF;
+  --gdg-text-dark: #14152A;
+  --gdg-text-medium: #5E6480;
+  --gdg-text-light: #8A8FA8;
+  --gdg-text-header: #12132B;
+  --gdg-text-header-selected: #12132B;
+  --gdg-border-color: #DCE1F5;
+  --gdg-horizontal-border-color: #DCE1F5;
+  --gdg-accent-color: #7C5CFF;
+  --gdg-accent-fg: #ffffff;
+  --gdg-accent-light: rgba(124,92,255,0.14);
+  --gdg-bg-bubble: #EFEAFF;
+  --gdg-bg-bubble-selected: #E7DFFF;
+  --gdg-link-color: #7C5CFF;
+}
+[data-testid="stDataFrame"] canvas { background: #ffffff !important; }
+
+/* ---------- ALERTES (succès / avertissement / erreur / info) — palette néon, plus de jaune brut ---------- */
+[data-testid="stAlert"], [data-testid="stAlertContainer"] {
+  border-radius: 10px !important;
+  border: 1px solid var(--rule) !important;
+  background: #ffffff !important;
+}
+div[data-testid="stAlertContentSuccess"] { background: rgba(33,230,168,0.10) !important; border-radius: 10px; }
+div[data-testid="stAlertContentSuccess"] p, div[data-testid="stAlertContentSuccess"] svg { color: #0E9E76 !important; fill: #0E9E76 !important; }
+div[data-testid="stAlertContentWarning"] { background: rgba(124,92,255,0.09) !important; border-radius: 10px; }
+div[data-testid="stAlertContentWarning"] p, div[data-testid="stAlertContentWarning"] svg { color: var(--gold) !important; fill: var(--gold) !important; }
+div[data-testid="stAlertContentError"] { background: rgba(255,62,165,0.08) !important; border-radius: 10px; }
+div[data-testid="stAlertContentError"] p, div[data-testid="stAlertContentError"] svg { color: var(--coral) !important; fill: var(--coral) !important; }
+div[data-testid="stAlertContentInfo"] { background: rgba(98,232,255,0.12) !important; border-radius: 10px; }
+div[data-testid="stAlertContentInfo"] p, div[data-testid="stAlertContentInfo"] svg { color: #0B8AA6 !important; fill: #0B8AA6 !important; }
 
 /* ---------- MISC ---------- */
 hr { border-top: 1px solid var(--rule) !important; }
