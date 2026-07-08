@@ -129,26 +129,34 @@ h1, h2, h3 { font-family: 'Space Grotesk', sans-serif !important; color: var(--n
 [data-testid="stSidebar"] hr { border-color: rgba(124,92,255,0.2) !important; }
 [data-testid="stSidebar"] .stButton>button { width: 100%; }
 
-/* ---------- BUTTONS ---------- */
-.stButton>button {
-  background: linear-gradient(135deg, var(--led-1) 0%, var(--led-2) 100%);
-  color: #fff !important; border: none; border-radius: 10px;
-  padding: .5rem 1.1rem; font-weight: 600; letter-spacing: .01em;
+/* ---------- BUTTONS — un seul design pour tous les boutons ---------- */
+.stButton>button,
+button[kind="primary"],
+button[kind="secondary"],
+[data-testid="stChatInputSubmitButton"],
+[data-testid="stBaseButton-secondary"],
+[data-testid="stBaseButton-primary"] {
+  background: linear-gradient(135deg, var(--led-1) 0%, var(--led-2) 100%) !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 10px !important;
+  padding: .55rem 1.15rem !important;
+  min-height: 2.6rem;
+  font-weight: 600; letter-spacing: .01em;
   transition: all .18s ease;
-  box-shadow: 0 2px 10px rgba(124,92,255,0.35), 0 0 0 rgba(98,232,255,0);
+  box-shadow: 0 2px 10px rgba(124,92,255,0.32) !important;
 }
-.stButton>button:hover {
+.stButton>button:hover,
+[data-testid="stChatInputSubmitButton"]:hover,
+[data-testid="stBaseButton-secondary"]:hover,
+[data-testid="stBaseButton-primary"]:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(124,92,255,0.45), 0 0 22px rgba(98,232,255,0.45);
+  box-shadow: 0 6px 18px rgba(124,92,255,0.42), 0 0 20px rgba(98,232,255,0.4) !important;
   filter: brightness(1.05);
 }
 .stButton>button:active { transform: translateY(0); }
-button[kind="primary"] {
-  background: linear-gradient(135deg, var(--led-3) 0%, var(--led-1) 100%) !important;
-  box-shadow: 0 2px 10px rgba(255,62,165,0.4), 0 0 22px rgba(124,92,255,0.3) !important;
-}
 
-/* ---------- FORM INPUTS (zone de saisie) — zéro noir, focus néon ---------- */
+/* ---------- FORM INPUTS — un seul design, une seule taille, zéro noir ---------- */
 div[data-testid="stTextInput"] input,
 div[data-testid="stTextArea"] textarea,
 div[data-testid="stNumberInput"] input,
@@ -158,16 +166,28 @@ div[data-baseweb="base-input"],
 div[data-baseweb="input"] {
   background: #ffffff !important;
   border: 1.5px solid var(--rule) !important;
-  border-radius: 12px !important;
+  border-radius: 10px !important;
   color: var(--ink) !important;
-  box-shadow: 0 1px 3px rgba(18,19,43,0.04) !important;
+  font-size: .93rem !important;
+  box-shadow: none !important;
   transition: border-color .2s ease, box-shadow .2s ease !important;
+}
+/* une seule hauteur pour tous les champs à une ligne */
+div[data-testid="stTextInput"] input,
+div[data-testid="stNumberInput"] input,
+div[data-baseweb="select"] > div {
+  min-height: 2.6rem !important;
+  padding: 0 .85rem !important;
+}
+div[data-testid="stTextArea"] textarea,
+div[data-testid="stChatInput"] textarea {
+  padding: .65rem .85rem !important;
 }
 div[data-testid="stTextInput"] input::placeholder,
 div[data-testid="stTextArea"] textarea::placeholder,
 div[data-testid="stChatInput"] textarea::placeholder {
   color: var(--ink-light) !important;
-  opacity: .75;
+  opacity: .7;
 }
 div[data-testid="stTextInput"] input:focus,
 div[data-testid="stTextArea"] textarea:focus,
@@ -176,21 +196,20 @@ div[data-testid="stChatInput"] textarea:focus,
 div[data-baseweb="select"]:focus-within > div,
 div[data-baseweb="base-input"]:focus-within {
   border-color: var(--gold) !important;
-  box-shadow: 0 0 0 3px rgba(124,92,255,0.15), 0 0 18px rgba(124,92,255,0.28) !important;
+  box-shadow: 0 0 0 3px rgba(124,92,255,0.15) !important;
   outline: none !important;
 }
-/* icônes / flèches (selectbox, stepper) : plus de noir */
+/* icônes / flèches : plus de noir */
 div[data-baseweb="select"] svg,
 [data-testid="stNumberInput"] svg,
-[data-testid="stTextInput"] svg,
-[data-testid="baseButton-headerNoPadding"] svg {
+[data-testid="stTextInput"] svg {
   fill: var(--ink-light) !important;
 }
-/* menu déroulant du selectbox */
+/* menu déroulant du selectbox — même design que les champs */
 ul[data-testid="stSelectboxVirtualDropdown"], div[data-baseweb="popover"] ul {
   background: #ffffff !important;
-  border: 1px solid var(--rule) !important;
-  border-radius: 12px !important;
+  border: 1.5px solid var(--rule) !important;
+  border-radius: 10px !important;
   box-shadow: 0 12px 28px rgba(18,19,43,0.14) !important;
   overflow: hidden;
 }
@@ -204,25 +223,32 @@ ul[data-testid="stSelectboxVirtualDropdown"] li:hover, div[data-baseweb="popover
   background: rgba(124,92,255,0.12) !important;
   color: var(--gold) !important;
 }
-/* boîte englobante du chat input */
+/* boîte englobante du chat input — même famille visuelle que les autres champs */
 [data-testid="stChatInput"] {
-  border-radius: 14px !important;
+  border-radius: 10px !important;
+  border: 1.5px solid var(--rule) !important;
+  background: #fff !important;
+}
+[data-testid="stChatInput"]:focus-within {
+  border-color: var(--gold) !important;
+  box-shadow: 0 0 0 3px rgba(124,92,255,0.15) !important;
 }
 [data-testid="stChatInput"] > div {
   border: none !important;
   background: transparent !important;
 }
-/* stepper +/- du number_input */
+/* stepper +/- du number_input — même famille que les champs */
 [data-testid="stNumberInputStepUp"], [data-testid="stNumberInputStepDown"] {
   background: #fff !important; border: 1.5px solid var(--rule) !important; color: var(--ink-light) !important;
+  border-radius: 8px !important;
 }
 [data-testid="stNumberInputStepUp"]:hover, [data-testid="stNumberInputStepDown"]:hover {
   border-color: var(--gold) !important; color: var(--gold) !important;
 }
-/* slider — piste + poignée en dégradé néon plutôt que rouge par défaut */
+/* slider — un seul design néon, pas de rouge par défaut */
 div[data-testid="stSlider"] [role="slider"] {
   background: var(--gold) !important;
-  box-shadow: 0 0 0 6px rgba(124,92,255,0.16), 0 0 14px rgba(124,92,255,0.45) !important;
+  box-shadow: 0 0 0 6px rgba(124,92,255,0.16) !important;
   border: 2px solid #fff !important;
 }
 div[data-testid="stSlider"] > div > div > div > div {
@@ -231,17 +257,18 @@ div[data-testid="stSlider"] > div > div > div > div {
 div[data-testid="stSlider"] > div > div > div {
   background: var(--rule) !important;
 }
-/* zone de saisie côté sidebar : mêmes règles de focus, texte clair conservé */
+/* zone de saisie côté sidebar : même design, texte clair conservé pour le fond sombre */
 [data-testid="stSidebar"] div[data-baseweb="select"] > div,
 [data-testid="stSidebar"] input,
 [data-testid="stSidebar"] textarea {
-  box-shadow: none !important;
+  background: rgba(255,255,255,0.06) !important;
+  border: 1.5px solid rgba(124,92,255,0.3) !important;
 }
 [data-testid="stSidebar"] input:focus,
 [data-testid="stSidebar"] textarea:focus,
 [data-testid="stSidebar"] div[data-baseweb="select"]:focus-within > div {
   border-color: var(--gold-light) !important;
-  box-shadow: 0 0 0 2px rgba(98,232,255,0.22), 0 0 16px rgba(98,232,255,0.35) !important;
+  box-shadow: 0 0 0 3px rgba(98,232,255,0.2) !important;
 }
 [data-testid="stSidebar"] div[data-baseweb="select"] svg { fill: var(--parchment) !important; }
 
@@ -312,11 +339,10 @@ div[data-testid="stSlider"] > div > div > div {
   box-shadow: 0 0 10px rgba(33,230,168,0.22);
 }
 
-/* ---------- QUIZ / BORDERED CONTAINERS — glass card with neon edge ---------- */
+/* ---------- QUIZ / BORDERED CONTAINERS — carte teintée, pas de blanc ---------- */
 [data-testid="stVerticalBlockBorderWrapper"] {
-  background: rgba(255,255,255,0.82);
-  backdrop-filter: blur(6px);
-  border-radius: 14px !important; border: 1px solid var(--rule) !important;
+  background: linear-gradient(160deg, #EFEAFF 0%, #E7F6FE 100%);
+  border-radius: 14px !important; border: 1px solid rgba(124,92,255,0.25) !important;
   padding: .4rem .3rem; position: relative; box-shadow: 0 2px 10px rgba(18,19,43,0.05);
   margin-bottom: .9rem;
   overflow: hidden;
@@ -328,8 +354,8 @@ div[data-testid="stSlider"] > div > div > div {
   box-shadow: 0 0 10px rgba(124,92,255,0.5);
 }
 [data-testid="stVerticalBlockBorderWrapper"]:hover {
-  border-color: rgba(124,92,255,0.4) !important;
-  box-shadow: 0 8px 22px rgba(124,92,255,0.14);
+  border-color: rgba(124,92,255,0.5) !important;
+  box-shadow: 0 8px 22px rgba(124,92,255,0.16);
 }
 
 .q-badge {
